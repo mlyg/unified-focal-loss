@@ -197,7 +197,7 @@ def focal_dice_loss(delta=0.7, gamma_fd=0.75):
         focal_dice_loss = K.sum(K.pow((1-dice_class), gamma_fd), axis=[-1])
         # normalise by dividing by number of classes
         num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        focal_tversky_loss = focal_dice_loss / num_classes
+        focal_dice_loss = focal_dice_loss / num_classes
         return focal_dice_loss
 
     return loss_function
