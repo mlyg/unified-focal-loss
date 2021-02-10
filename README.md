@@ -19,7 +19,7 @@ The Mixed Focal loss is a new compound loss function and defined as the linear w
 
 The Mixed Focal loss inherits properties from variants of both the Dice loss and cross-entropy loss:
 
-![Overview of loss function inheritance](https://github.com/mlyg/mixed-focal-loss/Figures/Overview_loss_function.png?raw=true)
+![Overview of loss function inheritance](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/Overview_loss_functions.png)
 
 ## Example use case 1: Kidney Tumour Segmentation 2019 (KiTS19) dataset
 
@@ -29,7 +29,7 @@ The data for the KiTS19 dataset can be downloaded from their official github rep
 
 In our paper, we compare 7 loss functions using the KiTS19 dataset and generate the following segmentations as a result:
 
-![Segmentations generated using KiTS19 dataset](https://github.com/mlyg/mixed-focal-loss/Figures/KiTS19_segmentation.png?raw=true)
+![Segmentations generated using KiTS19 dataset](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/KiTS19_segmentation.png)
 
 (a) ground truth, (b) Focal loss, (c) Dice loss, (d) Tversky loss, (e) Cosine Tversky loss, (f) Focal Tversky loss, (g) Combo loss, (h) Mixed Focal loss. The kidney is highlighted in red and the tumour in blue. A magnified contour of the segmentation is provided in the top right-hand corner of each image.
 
@@ -42,7 +42,7 @@ The data for the BraTS20 dataset can be downloaded by following the instructions
 
 In our paper, we compare the top three performing loss functions using the BraTS20 dataset and generate the following segmentations as a result:
 
-![Segmentations generated using BraTS20 dataset](https://github.com/mlyg/mixed-focal-loss/Figures/BraTS20_segmentation.png?raw=true)
+![Segmentations generated using BraTS20 dataset](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/BraTS20_segmentation.png)
 
 (a) ground truth, (b) Focal Tversky loss, (c) Combo loss and (d) Mixed Focal loss. Tumour is highlighted in red. A magnified contour of the segmentation is provided in (e-h) below each respective image.
 
