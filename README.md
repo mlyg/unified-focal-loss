@@ -23,7 +23,7 @@ The Mixed Focal loss inherits properties from variants of both the Dice loss and
 
 ## Example use case 1: Kidney Tumour Segmentation 2019 (KiTS19) dataset
 
-The KiTS19 dataset consists of 300 arterial phase abdominal CT scans from patients who underwent partial removal of the tumour and surrounding kidney or complete removal of the kidney including the tumour at the University of Minnesota Medical Center, USA.
+The KiTS19 dataset consists of 300 arterial phase abdominal CT scans. These are from patients who underwent partial removal of the tumour and surrounding kidney or complete removal of the kidney including the tumour at the University of Minnesota Medical Center, USA.
 
 The data for the KiTS19 dataset can be downloaded from their official github repository: https://github.com/neheller/kits19
 
@@ -36,7 +36,7 @@ In our paper, we compare 7 loss functions using the KiTS19 dataset and generate 
 
 ## Example use case 2: Brain Tumour Segmentation 2020 (BraTS20) dataset
 
-This is currently the largest, publicly available and fully-annotated dataset for medical image segmentation, and comprises of 494 multimodal scans of patients with either low-grade glioma or high-grade glioblastoma.
+The BraTS20 dataset is currently the largest, publicly available and fully-annotated dataset for medical image segmentation. It comprises of 494 multimodal scans of patients with either low-grade glioma or high-grade glioblastoma. We focus on the T1 contrast-enhanced MRI scans for segmenting the enhancing tumour region.
 
 The data for the BraTS20 dataset can be downloaded by following the instructions on their official website: https://www.med.upenn.edu/cbica/brats2020/data.html
 
@@ -69,5 +69,5 @@ i.e. model.compile(loss=dice_loss) or model.compile(loss=tversky_loss)
 2. Cosine Tversky loss has a single focal parameter gamma that controls the degree of down-weighting of easy examples. Default is gamma = 1 i.e. no weighting. 
 
 3. Combo loss has two parameters, alpha and beta:
-a) alpha: variable that controls weighting of dice and cross-entropy loss
+a) alpha: variable that controls weighting of Dice and cross-entropy loss
 b) beta: a variable controlling the relative contirbution of false positive and false negative predictions on the modified Focal loss. Beta > 0.5 penalises false negatives more than false positives. The default is for alpha = beta = 0.5
