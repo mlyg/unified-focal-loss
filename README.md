@@ -1,5 +1,6 @@
 # Mixed Focal loss
 Repository for the code used in "A Mixed Focal Loss Function for Handling Class Imbalanced Medical Image Segmentation".
+The paper can be found at: https://arxiv.org/abs/2102.04525
 
 ## Description of repository contents
 In this repository, please find the associated Keras implementation for the following loss functions:
