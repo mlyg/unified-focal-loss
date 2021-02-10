@@ -1,6 +1,8 @@
 # Mixed Focal loss
 Repository for the code used in "A Mixed Focal Loss Function for Handling Class Imbalanced Medical Image Segmentation".
-The paper can be found at: https://arxiv.org/abs/2102.04525
+
+## Source
+The preprint version of the paper can be found at: https://arxiv.org/abs/2102.04525
 
 ## Description of repository contents
 In this repository, please find the associated Keras implementation for the following loss functions:
@@ -13,7 +15,36 @@ In this repository, please find the associated Keras implementation for the foll
 7. Mixed Focal loss
 
 ## Description of the Mixed Focal loss
-The Mixed Focal loss is defined as the linear weighted sum of the modified Focal loss and modified Focal Dice loss. 
+The Mixed Focal loss is a new compound loss function and defined as the linear weighted sum of the modified Focal loss and modified Focal Dice loss. The tunable parameters enable optimisation for recall-precision balance. and to deal with class imbalanced image segmentation with its focal parameter.
+
+The Mixed Focal loss inherits properties from variants of both the Dice loss and cross-entropy loss:
+
+![Overview of loss function inheritance](https://github.com/mlyg/mixed-focal-loss/Figures/Overview_loss_function.png?raw=true)
+
+## Example use case 1: Kidney Tumour Segmentation 2019 (KiTS19) dataset
+
+The KiTS19 dataset consists of 300 arterial phase abdominal CT scans from patients who underwent partial removal of the tumour and surrounding kidney or complete removal of the kidney including the tumour at the University of Minnesota Medical Center, USA.
+
+The data for the KiTS19 dataset can be downloaded from their official github repository: https://github.com/neheller/kits19
+
+In our paper, we compare 7 loss functions using the KiTS19 dataset and generate the following segmentations as a result:
+
+![Segmentations generated using KiTS19 dataset](https://github.com/mlyg/mixed-focal-loss/Figures/KiTS19_segmentation.png?raw=true)
+
+(a) ground truth, (b) Focal loss, (c) Dice loss, (d) Tversky loss, (e) Cosine Tversky loss, (f) Focal Tversky loss, (g) Combo loss, (h) Mixed Focal loss. The kidney is highlighted in red and the tumour in blue. A magnified contour of the segmentation is provided in the top right-hand corner of each image.
+
+
+## Example use case 2: Brain Tumour Segmentation 2020 (BraTS20) dataset
+
+This is currently the largest, publicly available and fully-annotated dataset for medical image segmentation, and comprises of 494 multimodal scans of patients with either low-grade glioma or high-grade glioblastoma.
+
+The data for the BraTS20 dataset can be downloaded by following the instructions on their official website: https://www.med.upenn.edu/cbica/brats2020/data.html
+
+In our paper, we compare the top three performing loss functions using the BraTS20 dataset and generate the following segmentations as a result:
+
+![Segmentations generated using BraTS20 dataset](https://github.com/mlyg/mixed-focal-loss/Figures/BraTS20_segmentation.png?raw=true)
+
+(a) ground truth, (b) Focal Tversky loss, (c) Combo loss and (d) Mixed Focal loss. Tumour is highlighted in red. A magnified contour of the segmentation is provided in (e-h) below each respective image.
 
 ## How to use the Mixed Focal loss
 For our experiments, we make use of the Medical Image Segmentation with Convolutional Neural Networks (MIScnn) open-source python library: 
@@ -39,5 +70,4 @@ i.e. model.compile(loss=dice_loss) or model.compile(loss=tversky_loss)
 
 3. Combo loss has two parameters, alpha and beta:
 a) alpha: variable that controls weighting of dice and cross-entropy loss
-b) beta: a variable controlling the relative contirbution of false positive and false negative predictions on the modified Focal loss. Beta > 0.5 penalises false negatives more than false positives. The default is for equal focus ('None').
-The default is for alpha = beta = 0.5
+b) beta: a variable controlling the relative contirbution of false positive and false negative predictions on the modified Focal loss. Beta > 0.5 penalises false negatives more than false positives. The default is for alpha = beta = 0.5
