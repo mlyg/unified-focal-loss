@@ -55,12 +55,12 @@ The Mixed Focal loss can be passed directly as a loss function into model.compil
 model.compile(loss =  mixed_focal_loss(weight=None, alpha=None, beta=None, delta=0.7, gamma_f=2.,gamma_fd=0.75), ...)
 
 The parameters are defined as follows:
-1. weight: lambda variable controlling weight given to Focal Tversky loss and Focal loss. If weighting is desired, this should be set between 0 and 1 with weight > 0.5 assigning more weight to Focal Dice loss than Focal loss. The default is to assign equal weights to both Focal Tversky loss and Focal loss. 
+1. weight: lambda variable controlling weight given to the modified Focal loss and Focal Dice loss. If weighting is desired, this should be set between 0 and 1 with weight > 0.5 assigning more weight to Focal Dice loss than Focal loss. The default is to assign equal weights to both Focal Tversky loss and Focal loss. 
 2. alpha: a vector of weights associated with each class. **The length of the vector must match the number of classes**. For example, for 2 class alpha = [x,y], for 3 classes alpha = [x,y,z]. The default is for equal weighting ('None'). 
 3. beta: a variable controlling the relative contirbution of false positive and false negative predictions on the modified Focal loss. Beta > 0.5 penalises false negatives more than false positives. The default is for equal focus ('None').
 4. delta: a variable controlling the relative contribution of false positive and false negative predictions on the modified Focal Dice loss. Delta > 0.5 penalises false negatives more than false positives. The default is the Tversky Index (delta = 0.7). 
 4. gamma_f: Focal loss focal parameter controls degree of down-weighting of easy examples. The default is gamma_f = 2. 
-5. gamma_ft: Focal Tversky loss focal parameter controls degree of down-weighting of easy examples. The default is gamma_ft = 0.75. 
+5. gamma_fd: Focal Dice loss focal parameter controls degree of down-weighting of easy examples. The default is gamma_fd = 0.75. 
 
 ## How to use the other loss functions in this repository
 1. Dice loss and Tversky loss do not have any modifiable parameters and should be passed directly to model.compile without invocation:
