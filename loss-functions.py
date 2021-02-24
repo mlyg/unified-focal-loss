@@ -13,7 +13,6 @@ def identify_axis(shape):
     else : raise ValueError('Metric: Shape of tensor is neither 2D or 3D.')
 
 
-
 # Dice loss
 def dice_loss(y_true, y_pred):
 	"""
@@ -256,7 +255,7 @@ def mixed_focal_loss(weight=None, alpha=None, beta=None, delta=0.7, gamma_f=2.,g
     			  false negatives more than false positives.
 
     :param gamma_f: modified Focal loss' focal parameter controls degree of down-weighting of easy examples
-    :param gamma_ft: modified Focal Dice loss' focal parameter controls degree of down-weighting of easy examples
+    :param gamma_fd: modified Focal Dice loss' focal parameter controls degree of down-weighting of easy examples
     """
     def loss_function(y_true,y_pred):
       # Obtain Focal Dice loss
