@@ -67,4 +67,4 @@ https://github.com/frankkramer-lab/MIScnn
 
 The Generalised Focal loss can be passed directly as a loss function into model.compile:
 
-model.compile(loss = generalised_focal_loss(weight=0.5, delta=0.7, gamma=0.2), ...)
+model.compile(loss = generalised_focal_loss(weight=0.5, delta=0.6, gamma=0.2), ...)
