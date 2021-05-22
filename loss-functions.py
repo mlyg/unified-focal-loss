@@ -317,9 +317,9 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75):
 
 
 ################################
-#    Generalised Focal loss    #
+#      Unified Focal loss      #
 ################################
-def generalised_focal_loss(weight=0.5, delta=0.6, gamma=0.2):
+def unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2):
     """
     :param weight: represents lambda parameter and controls weight given to Asymmetric Focal Tversky loss 
                    and Asymmetric Focal loss
