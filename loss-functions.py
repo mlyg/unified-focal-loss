@@ -1,6 +1,7 @@
         
-# Imports
 from tensorflow.keras import backend as K
+import numpy as np
+import tensorflow as tf
 
 # Helper function to enable loss function to be flexibly used for 
 # both 2D or 3D image segmentation - source: https://github.com/frankkramer-lab/MIScnn
@@ -13,98 +14,109 @@ def identify_axis(shape):
     else : raise ValueError('Metric: Shape of tensor is neither 2D or 3D.')
 
 
-
 ################################
 #           Dice loss          #
 ################################
-def dice_loss(y_true, y_pred):
+def dice_loss(delta = 0.5, smooth = 0.000001):
+    """Dice loss originates from Sørensen–Dice coefficient, which is a statistic developed in 1940s to gauge the similarity between two samples.
+    
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.5
+    smooth : float, optional
+        smoothing constant to prevent division by zero errors, by default 0.000001
     """
-    delta: controls weight given to false positive and false negatives. 
-           This equates to the Tversky index when delta = 0.7
-    smooth: smoothing constant to prevent division by zero errors
-    """
-    delta = 0.5
-    smooth = 0.000001
-    axis = identify_axis(y_true.get_shape())
-    # Calculate true positives (tp), false negatives (fn) and false positives (fp)
-    tp = K.sum(y_true * y_pred, axis=axis)
-    fn = K.sum(y_true * (1-y_pred), axis=axis)
-    fp = K.sum((1-y_true) * y_pred, axis=axis)
-    # Calculate Dice score
-    dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-    # Sum up classes to one score
-    dice_loss = K.sum(1-dice_class, axis=[-1])
-    # adjusts loss to account for number of classes
-    num_classes = K.cast(K.shape(y_true)[-1],'float32')
-    dice_loss = dice_loss / num_classes
-
-    return dice_loss
+    def loss_function(y_true, y_pred):
+        axis = identify_axis(y_true.get_shape())
+        # Calculate true positives (tp), false negatives (fn) and false positives (fp)
+        tp = K.sum(y_true * y_pred, axis=axis)
+        fn = K.sum(y_true * (1-y_pred), axis=axis)
+        fp = K.sum((1-y_true) * y_pred, axis=axis)
+        # Calculate Dice score
+        dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
+        # Sum up classes to one score
+        dice_loss = K.sum(1-dice_class, axis=[-1])
+        # adjusts loss to account for number of classes
+        num_classes = K.cast(K.shape(y_true)[-1],'float32')
+        dice_loss = dice_loss / num_classes
+        return dice_loss
+        
+    return loss_function
 
 
 ################################
 #         Tversky loss         #
 ################################
-def tversky_loss(y_true, y_pred):
-	"""
-	Paper: Tversky loss function for image segmentation using 3D fully convolutional deep networks
+def tversky_loss(delta = 0.7, smooth = 0.000001):
+    """Tversky loss function for image segmentation using 3D fully convolutional deep networks
 	Link: https://arxiv.org/abs/1706.05721
 
-    delta: controls weight given to false positive and false negatives. 
-           This equates to the Tversky index when delta = 0.7
-    smooth: smoothing constant to prevent division by zero errors
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.7
+    smooth : float, optional
+        smoothing constant to prevent division by zero errors, by default 0.000001
     """
-    delta = 0.7
-    smooth = 0.000001
-    axis = identify_axis(y_true.get_shape())
-    # Calculate true positives (tp), false negatives (fn) and false positives (fp)   
-    tp = K.sum(y_true * y_pred, axis=axis)
-    fn = K.sum(y_true * (1-y_pred), axis=axis)
-    fp = K.sum((1-y_true) * y_pred, axis=axis)
-    tversky_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-    # Sum up classes to one score
-    tversky_loss = K.sum(1-tversky_class, axis=[-1])
-    # adjusts loss to account for number of classes
-    num_classes = K.cast(K.shape(y_true)[-1],'float32')
-    tversky_loss = tversky_loss / num_classes
+    def loss_function(y_true, y_pred):
+        axis = identify_axis(y_true.get_shape())
+        # Calculate true positives (tp), false negatives (fn) and false positives (fp)   
+        tp = K.sum(y_true * y_pred, axis=axis)
+        fn = K.sum(y_true * (1-y_pred), axis=axis)
+        fp = K.sum((1-y_true) * y_pred, axis=axis)
+        tversky_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
+        # Sum up classes to one score
+        tversky_loss = K.sum(1-tversky_class, axis=[-1])
+        # adjusts loss to account for number of classes
+        num_classes = K.cast(K.shape(y_true)[-1],'float32')
+        tversky_loss = tversky_loss / num_classes
+        return tversky_loss
 
-    return tversky_loss
+    return loss_function
 
 ################################
 #       Dice coefficient       #
 ################################
-def dice_coefficient(y_true, y_pred):
-	"""
-    delta: controls weight given to false positive and false negatives. 
-           This equates to the Dice score when delta = 0.5
-    smooth: smoothing constant to prevent division by zero errors
-    """
-    delta = 0.5
-    smooth = 0.000001
-    axis = identify_axis(y_true.get_shape())
-    # Calculate true positives (tp), false negatives (fn) and false positives (fp)   
-    tp = K.sum(y_true * y_pred, axis=axis)
-    fn = K.sum(y_true * (1-y_pred), axis=axis)
-    fp = K.sum((1-y_true) * y_pred, axis=axis)
-    dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-    # Sum up classes to one score
-    dice = K.sum(dice_class, axis=[-1])
-    # adjusts loss to account for number of classes
-    num_classes = K.cast(K.shape(y_true)[-1],'float32')
-    dice = dice / num_classes
+def dice_coefficient(delta = 0.5, smooth = 0.000001):
+    """The Dice similarity coefficient, also known as the Sørensen–Dice index or simply Dice coefficient, is a statistical tool which measures the similarity between two sets of data.
 
-    return dice
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.5
+    smooth : float, optional
+        smoothing constant to prevent division by zero errors, by default 0.000001
+    """
+    def loss_function(y_true, y_pred):
+        axis = identify_axis(y_true.get_shape())
+        # Calculate true positives (tp), false negatives (fn) and false positives (fp)   
+        tp = K.sum(y_true * y_pred, axis=axis)
+        fn = K.sum(y_true * (1-y_pred), axis=axis)
+        fp = K.sum((1-y_true) * y_pred, axis=axis)
+        dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
+        # Sum up classes to one score
+        dice = K.sum(dice_class, axis=[-1])
+        # adjusts loss to account for number of classes
+        num_classes = K.cast(K.shape(y_true)[-1],'float32')
+        dice = dice / num_classes
+        return dice
+
+    return loss_function
 
 ################################
 #          Combo loss          #
 ################################
 def combo_loss(alpha=0.5,beta=0.5):
-	"""
-	Paper: Combo Loss: Handling Input and Output Imbalance in Multi-Organ Segmentation
-	Link: https://arxiv.org/abs/1805.02798
+    """Combo Loss: Handling Input and Output Imbalance in Multi-Organ Segmentation
+    Link: https://arxiv.org/abs/1805.02798
 
-	:param beta: controls relative weight of false positives and false negatives. 
-			 beta > 0.5 penalises false negatives more than false positives.
-	:param alpha controls weighting of dice and cross-entropy loss.
+    Parameters
+    ----------
+    alpha : float, optional
+        controls weighting of dice and cross-entropy loss., by default 0.5
+    beta : float, optional
+        beta > 0.5 penalises false negatives more than false positives., by default 0.5
     """
     def loss_function(y_true,y_pred):
         dice = dice_coefficient(y_true, y_pred)
@@ -124,26 +136,22 @@ def combo_loss(alpha=0.5,beta=0.5):
         else:
             combo_loss = cross_entropy - dice
         return combo_loss
-        
+
     return loss_function
 
 ################################
 #      Focal Tversky loss      #
 ################################
-def focal_tversky_loss(gamma=0.75):
-    def loss_function(y_true, y_pred):
-    	"""
-    	Paper: A Novel Focal Tversky loss function with improved Attention U-Net for lesion segmentation
-    	Link: https://arxiv.org/abs/1810.07842
+def focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
+    """A Novel Focal Tversky loss function with improved Attention U-Net for lesion segmentation
+    Link: https://arxiv.org/abs/1810.07842
 
-    	:param gamma: focal parameter controls degree of down-weighting of easy examples
-        
-        delta: controls weight given to false positive and false negatives. 
-        this equates to the Focal Tversky loss when delta = 0.7
-		smooth: smooithing constant to prevent division by 0 errors
-        """
-        delta=0.7
-        smooth=0.000001
+    Parameters
+    ----------
+    gamma : float, optional
+        focal parameter controls degree of down-weighting of easy examples, by default 0.75
+    """
+    def loss_function(y_true, y_pred):
         # Clip values to prevent division by zero error
         epsilon = K.epsilon()
         y_pred = K.clip(y_pred, epsilon, 1. - epsilon) 
@@ -167,13 +175,18 @@ def focal_tversky_loss(gamma=0.75):
 #          Focal loss          #
 ################################
 def focal_loss(alpha=None, beta=None, gamma_f=2.):
+    """Focal loss is used to address the issue of the class imbalance problem. A modulation term applied to the Cross-Entropy loss function.
+
+    Parameters
+    ----------
+    alpha : float, optional
+        controls weight given to each class, by default None
+    beta : float, optional
+        controls relative weight of false positives and false negatives. Beta > 0.5 penalises false negatives more than false positives, by default None
+    gamma_f : float, optional
+        focal parameter controls degree of down-weighting of easy examples, by default 2.
+    """
     def loss_function(y_true, y_pred):
-    	"""
-        :param alpha: controls weight given to each class
-        :param beta: controls relative weight of false positives and false negatives. Beta > 0.5 penalises 
-                 false negatives more than false positives.
-        :param gamma_f: focal parameter controls degree of down-weighting of easy examples. 
-        """ 
         axis = identify_axis(y_true.get_shape())
         # Clip values to prevent division by zero error
         epsilon = K.epsilon()
@@ -192,24 +205,27 @@ def focal_loss(alpha=None, beta=None, gamma_f=2.):
 
         focal_loss = K.mean(K.sum(focal_loss, axis=[-1]))
         return focal_loss
-
+        
     return loss_function
 
 ################################
 #       Hybrid Focal loss      #
 ################################
 def hybrid_focal_loss(weight=None, alpha=None, beta=None, gamma=0.75, gamma_f=2.):
-    """
-    Default is the linear unweighted sum of the Focal loss and Focal Tversky loss
+    """Default is the linear unweighted sum of the Focal loss and Focal Tversky loss
 
-    :param weight: represents lambda parameter and controls weight given to Focal Tversky loss and Focal loss
-    :param alpha: controls weight given to each class
-    :param beta: controls relative weight of false positives and false negatives. Beta > 0.5 penalises 
-    			  false negatives more than false positives.
-
-    :param gamma: Focal Tversky loss' focal parameter controls degree of down-weighting of easy examples
-    :param gamma_f: Focal loss' focal parameter controls degree of down-weighting of easy examples
-
+    Parameters
+    ----------
+    weight : float, optional
+        represents lambda parameter and controls weight given to Focal Tversky loss and Focal loss, by default None
+    alpha : float, optional
+        controls weight given to each class, by default None
+    beta : float, optional
+        controls relative weight of false positives and false negatives. Beta > 0.5 penalises  false negatives more than false positives, by default None
+    gamma : float, optional
+        Focal Tversky loss' focal parameter controls degree of down-weighting of easy examples, by default 0.75
+    gamma_f : float, optional
+        Focal loss' focal parameter controls degree of down-weighting of easy examples, by default 2.
     """
     def loss_function(y_true,y_pred):
       # Obtain Focal Dice loss
@@ -228,11 +244,28 @@ def hybrid_focal_loss(weight=None, alpha=None, beta=None, gamma=0.75, gamma_f=2.
 #     Asymmetric Focal loss    #
 ################################
 def asymmetric_focal_loss(delta=0.25, gamma=2):
+    """For Imbalanced datasets
+
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.25
+    gamma : float, optional
+        Focal Tversky loss' focal parameter controls degree of down-weighting of easy examples, by default 2.0
+    """
     def loss_function(y_true, y_pred):
-        """
-	:param delta: controls weight given to false positive and false negatives. 
-        :param gamma: focal parameter controls degree of down-weighting of easy examples
-        """
+        axis = identify_axis(y_true.get_shape())
+
+        # convert into integer values for tf.where
+        y_true_int = tf.cast(y_true, 'uint32')
+        # inverts 1 to 0 and 0 to 1
+        y_not_true = tf.where((y_true_int==0)|(y_true_int==1), y_true_int^1, y_true_int)
+
+        # predictions for foreground and background class
+        foreground = y_pred * y_true 
+        background = y_pred * y_not_true     
+
+        # Clip values to prevent division by zero error
         epsilon = K.epsilon()
 	# Clip values to prevent division by zero error
         y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
@@ -258,18 +291,19 @@ def asymmetric_focal_loss(delta=0.25, gamma=2):
 #################################
 # Asymmetric Focal Tversky loss #
 #################################
-def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75):
-    def loss_function(y_true, y_pred):
-        """
-        This is the implementation for binary segmentation.
+def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
+    """This is the implementation for binary segmentation.
 
-        :param delta: controls weight given to false positive and false negatives. 
-                      this equates to the Focal Tversky loss when delta = 0.7
-        :param gamma: focal parameter controls degree of down-weighting of easy examples
-        
-        smooth: smooithing constant to prevent division by 0 errors
-        """
-        smooth=0.000001
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.7
+    gamma : float, optional
+        focal parameter controls degree of down-weighting of easy examples, by default 0.75
+    smooth : float, optional
+        smooithing constant to prevent division by 0 errors, by default 0.000001
+    """
+    def loss_function(y_true, y_pred):
         # Clip values to prevent division by zero error
         epsilon = K.epsilon()
         y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
@@ -300,14 +334,16 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75):
 #      Unified Focal loss      #
 ################################
 def unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2):
-    """
-    :param weight: represents lambda parameter and controls weight given to Asymmetric Focal Tversky loss 
-                   and Asymmetric Focal loss
-    :param alpha: controls weight given to each class
-    :param beta: controls relative weight of false positives and false negatives. Beta > 0.5 penalises 
-                  false negatives more than false positives.
+    """The Unified Focal loss is a new compound loss function that unifies Dice-based and cross entropy-based loss functions into a single framework.
 
-    :param gamma: focal parameter controls the degree of background suppression and foreground enhancement
+    Parameters
+    ----------
+    weight : float, optional
+        represents lambda parameter and controls weight given to Asymmetric Focal Tversky loss and Asymmetric Focal loss, by default 0.5
+    delta : float, optional
+        controls weight given to each class, by default 0.6
+    gamma : float, optional
+        focal parameter controls the degree of background suppression and foreground enhancement, by default 0.2
     """
     def loss_function(y_true,y_pred):
       # Obtain Asymmetric Focal Tversky loss
