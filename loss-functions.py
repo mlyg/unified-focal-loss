@@ -227,7 +227,7 @@ def hybrid_focal_loss(weight=None, alpha=None, beta=None, gamma=0.75, gamma_f=2.
 ################################
 #     Asymmetric Focal loss    #
 ################################
-def asymmetric_focal_loss(delta=0.5, gamma=0.2):
+def asymmetric_focal_loss(delta=0.25, gamma=2):
     def loss_function(y_true, y_pred):
         """
 	:param delta: controls weight given to false positive and false negatives. 
