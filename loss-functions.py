@@ -227,51 +227,31 @@ def hybrid_focal_loss(weight=None, alpha=None, beta=None, gamma=0.75, gamma_f=2.
 ################################
 #     Asymmetric Focal loss    #
 ################################
-def asymmetric_focal_loss(alpha=None, beta=None, gamma=2.):
+def asymmetric_focal_loss(delta=0.5, gamma=0.2):
     def loss_function(y_true, y_pred):
         """
-        :param alpha: controls weight given to each class
-        :param beta: controls relative weight of false positives and false negatives. Beta > 0.5 penalises 
-                 false negatives more than false positives.
-        :param gamma_f: focal parameter controls degree of down-weighting of easy examples. 
-        """ 
-        axis = identify_axis(y_true.get_shape())
-
-
-        # convert into integer values for tf.where
-        y_true_int = tf.cast(y_true, 'uint32')
-        # inverts 1 to 0 and 0 to 1
-        y_not_true = tf.where((y_true_int==0)|(y_true_int==1), y_true_int^1, y_true_int)
-
-        # predictions for foreground and background class
-        foreground = y_pred * y_true 
-        background = y_pred * y_not_true     
-
-        # Clip values to prevent division by zero error
+	:param delta: controls weight given to false positive and false negatives. 
+        :param gamma: focal parameter controls degree of down-weighting of easy examples
+        """
         epsilon = K.epsilon()
-        foreground = K.clip(foreground, epsilon, 1. - epsilon)
-        background = K.clip(background, epsilon, 1. - epsilon)
+	# Clip values to prevent division by zero error
+        y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
+	
+        axis = identify_axis(y_true.get_shape())  
+	
+        cross_entropy = -y_true * K.log(y_pred)
+	
+	# Calculate background Focal loss with background suppression
+        back_ce = K.pow(1 - y_pred[:,:,:,0], gamma) * cross_entropy[:,:,:,0]
+        back_ce =  (1 - delta) * back_ce
 
+	# Calcualte foreground Focal loss component no suppresion
+        fore_ce = cross_entropy[:,:,:,1]
+        fore_ce = delta * fore_ce
 
-        back_cross_entropy = y_not_true * K.log(background) 
-        fore_cross_entropy = y_true * K.log(foreground)
+        loss = K.mean(K.sum(tf.stack([back_ce, fore_ce],axis=-1),axis=-1))
 
-        if beta is not None:
-            beta_weight = np.array([beta, 1-beta])
-            back_cross_entropy = beta_weight * back_cross_entropy
-            fore_cross_entropy = beta_weight * fore_cross_entropy
-
-        if alpha is not None:
-            alpha_weight = np.array(alpha, dtype=np.float32)
-            focal = alpha_weight * K.pow(1 - background, gamma_f) 
-        else:
-            focal = K.pow(1 - background, gamma)
-
-        focal_loss = - (fore_cross_entropy + (focal * back_cross_entropy))
-
-        focal_loss = K.mean(K.sum(focal_loss, axis=[-1]))
-
-        return focal_loss
+        return loss
 
     return loss_function
 
