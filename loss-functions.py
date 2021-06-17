@@ -119,7 +119,7 @@ def combo_loss(alpha=0.5,beta=0.5):
         beta > 0.5 penalises false negatives more than false positives., by default 0.5
     """
     def loss_function(y_true,y_pred):
-        dice = dice_coefficient(y_true, y_pred)
+        dice = dice_coefficient()(y_true, y_pred)
         axis = identify_axis(y_true.get_shape())
         # Clip values to prevent division by zero error
         epsilon = K.epsilon()
