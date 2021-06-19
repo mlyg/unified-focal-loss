@@ -316,7 +316,7 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
         dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
 
         #calculate losses separately for each class, only suppressing background class
-        back_dice = K.pow(1-dice_class[:,0], gamma)
+        back_dice = K.pow(1-dice_class[:,0], 1-gamma)
         fore_dice = 1-dice_class[:,1]
 
         # Sum up classes to one score
