@@ -243,7 +243,8 @@ def hybrid_focal_loss(weight=None, alpha=None, beta=None, gamma=0.75, gamma_f=2.
 ################################
 #     Asymmetric Focal loss    #
 ################################
-def asymmetric_focal_loss(delta=0.25, gamma=2):
+def asymmetric_focal_loss(delta=0.25, gamma=2.):
+    def loss_function(y_true, y_pred):
     """For Imbalanced datasets
 
     Parameters
@@ -253,32 +254,15 @@ def asymmetric_focal_loss(delta=0.25, gamma=2):
     gamma : float, optional
         Focal Tversky loss' focal parameter controls degree of down-weighting of easy examples, by default 2.0
     """
-    def loss_function(y_true, y_pred):
-        axis = identify_axis(y_true.get_shape())
-
-        # convert into integer values for tf.where
-        y_true_int = tf.cast(y_true, 'uint32')
-        # inverts 1 to 0 and 0 to 1
-        y_not_true = tf.where((y_true_int==0)|(y_true_int==1), y_true_int^1, y_true_int)
-
-        # predictions for foreground and background class
-        foreground = y_pred * y_true 
-        background = y_pred * y_not_true     
-
-        # Clip values to prevent division by zero error
-        epsilon = K.epsilon()
-	# Clip values to prevent division by zero error
-        y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
-	
         axis = identify_axis(y_true.get_shape())  
-	
+
+        epsilon = K.epsilon()
+        y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
         cross_entropy = -y_true * K.log(y_pred)
-	
-	# Calculate background Focal loss with background suppression
+
         back_ce = K.pow(1 - y_pred[:,:,:,0], gamma) * cross_entropy[:,:,:,0]
         back_ce =  (1 - delta) * back_ce
 
-	# Calcualte foreground Focal loss component no suppresion
         fore_ce = cross_entropy[:,:,:,1]
         fore_ce = delta * fore_ce
 
@@ -313,14 +297,14 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
         tp = K.sum(y_true * y_pred, axis=axis)
         fn = K.sum(y_true * (1-y_pred), axis=axis)
         fp = K.sum((1-y_true) * y_pred, axis=axis)
-        dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
+        dice_class = (tp + epsilon)/(tp + delta*fn + (1-delta)*fp + epsilon)
 
         #calculate losses separately for each class, only suppressing background class
-        back_dice = K.pow(1-dice_class[:,0], 1-gamma)
-        fore_dice = 1-dice_class[:,1]
+        back_dice = (1-dice_class[:,0]) 
+        fore_dice = (1-dice_class[:,1]) * K.pow(1-dice_class[:,1], -gamma) 
 
         # Sum up classes to one score
-        loss = K.sum(tf.stack([back_dice, fore_dice],axis=-1),axis=[-1])
+        loss = K.mean(K.sum(tf.stack([back_dice,fore_dice],axis=-1), axis=-1))
 
         # adjusts loss to account for number of classes
         num_classes = K.cast(K.shape(y_true)[-1],'float32')
