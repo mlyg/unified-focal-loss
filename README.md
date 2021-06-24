@@ -19,7 +19,7 @@ The Unified Focal loss is a new compound loss function that unifies Dice-based a
 
 It can be shown that all Dice and cross entropy based loss functions described above are special cases of the Unified Focal loss:
 
-![Overview of loss function inheritance](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/Overview.png)
+![Overview of loss function inheritance](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/Overview.png)
 
 ## Example use case 1: Breast UltraSound 2017 (BUS2017) dataset
 
