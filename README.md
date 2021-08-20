@@ -21,6 +21,13 @@ It can be shown that all Dice and cross entropy based loss functions described a
 
 ![Overview of loss function inheritance](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/Summary.png)
 
+## **Update: Guidance for hyperparameters to use for your own dataset**
+We have tested the Unified Focal loss on an additional 4 datasets (Will link paper once available). For optimal performance, we find it easiest to keep delta = 0.6, lambda = 0.5, and instead focus on altering the gamma parameter in relation to the degree of class imbalance. Interestingly, we find the Unified Focal loss to outperform DSC + CE loss even when there is little class imbalance, which suggests that the Unified Focal loss may be more widely applicable than we expected.
+
+To choose the right value for gamma, the important step is to identify the degree of class imbalance in the dataset:
+1. If the foreground occupies a large part of the image (i.e. little class imbalance), a small Gamma value is ideal. For ISIC2018, 2018 Data Science bowl, DRIVE, we find Gamma = 0.1 (and potentially less) to be optimal
+2. If the foreground occupies a very small part of the image (i.e. high class imbalance), a large Gamma value is ideal. For CVC-ClinicDB, we find Gamma = 0.3 (and potentially higher) to be optimal.  
+
 ## Example use case 1: Breast UltraSound 2017 (BUS2017) dataset
 
 The BUS2017 dataset B consists of 163 ultrasound images and associated ground truth segmentations collected from the UDIAT Diagnostic Centre of the Parc Tauli Corporation, Sabadell, Spain.
