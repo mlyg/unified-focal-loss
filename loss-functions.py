@@ -35,11 +35,9 @@ def dice_loss(delta = 0.5, smooth = 0.000001):
         fp = K.sum((1-y_true) * y_pred, axis=axis)
         # Calculate Dice score
         dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-        # Sum up classes to one score
-        dice_loss = K.sum(1-dice_class, axis=[-1])
-        # adjusts loss to account for number of classes
-        num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        dice_loss = dice_loss / num_classes
+        # Average class scores
+        dice_loss = K.mean(1-dice_class)
+
         return dice_loss
         
     return loss_function
@@ -66,11 +64,9 @@ def tversky_loss(delta = 0.7, smooth = 0.000001):
         fn = K.sum(y_true * (1-y_pred), axis=axis)
         fp = K.sum((1-y_true) * y_pred, axis=axis)
         tversky_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-        # Sum up classes to one score
-        tversky_loss = K.sum(1-tversky_class, axis=[-1])
-        # adjusts loss to account for number of classes
-        num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        tversky_loss = tversky_loss / num_classes
+        # Average class scores
+        tversky_loss = K.mean(1-tversky_class)
+
         return tversky_loss
 
     return loss_function
@@ -95,11 +91,9 @@ def dice_coefficient(delta = 0.5, smooth = 0.000001):
         fn = K.sum(y_true * (1-y_pred), axis=axis)
         fp = K.sum((1-y_true) * y_pred, axis=axis)
         dice_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-        # Sum up classes to one score
-        dice = K.sum(dice_class, axis=[-1])
-        # adjusts loss to account for number of classes
-        num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        dice = dice / num_classes
+        # Average class scores
+        dice = K.mean(dice_class)
+
         return dice
 
     return loss_function
@@ -161,11 +155,9 @@ def focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
         fn = K.sum(y_true * (1-y_pred), axis=axis)
         fp = K.sum((1-y_true) * y_pred, axis=axis)
         tversky_class = (tp + smooth)/(tp + delta*fn + (1-delta)*fp + smooth)
-        # Sum up classes to one score
-        focal_tversky_loss = K.sum(K.pow((1-tversky_class), gamma), axis=[-1])
-    	# adjusts loss to account for number of classes
-        num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        focal_tversky_loss = focal_tversky_loss / num_classes
+        # Average class scores
+        focal_tversky_loss = K.mean(K.pow((1-tversky_class), gamma))
+	
         return focal_tversky_loss
 
     return loss_function
@@ -304,12 +296,8 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
         back_dice = (1-dice_class[:,0]) 
         fore_dice = (1-dice_class[:,1]) * K.pow(1-dice_class[:,1], -gamma) 
 
-        # Sum up classes to one score
-        loss = K.mean(K.sum(tf.stack([back_dice,fore_dice],axis=-1), axis=-1))
-
-        # adjusts loss to account for number of classes
-        num_classes = K.cast(K.shape(y_true)[-1],'float32')
-        loss = loss / num_classes
+        # Average class scores
+        loss = K.mean(tf.stack([back_dice,fore_dice],axis=-1))
         return loss
 
     return loss_function
