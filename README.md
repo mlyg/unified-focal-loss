@@ -60,6 +60,7 @@ Axial slice from an example segmentation for each loss function for the KiTS19 d
 For our experiments, we make use of the Medical Image Segmentation with Convolutional Neural Networks (MIScnn) open-source python library: 
 https://github.com/frankkramer-lab/MIScnn
 
-To use each loss function, for example, the asymmetric Unified Focal loss can be passed directly into model.compile:
+To use each loss function, they can be called in model.compile where the hyperparameters can be specified (otherwise default values used):
 
+For example:
 model.compile(loss = asym_unified_focal_loss(), ...)
