@@ -2,52 +2,46 @@
 Repository for the code used in "Unified Focal Loss: Generalising Dice and Cross Entropy-based Losses to Handle Class Imbalanced Medical Image Segmentation".
 
 ## Source
-The preprint version of the paper can be found at: https://arxiv.org/abs/2102.04525
+The latest version of the preprint can be found at: https://arxiv.org/abs/2102.04525
 
 ## Description of repository contents
 In this repository, please find the associated Tensorflow/Keras implementation for the following loss functions:
 1. Dice loss
 2. Tversky loss
 3. Combo loss
-4. Focal Tversky loss
-5. Focal loss
-7. Hybrid Focal loss (previously called Mixed Focal loss)
-8. Unified Focal loss
+4. Focal Tversky loss (symmetric and asymmetric)
+5. Focal loss (symmetric and asymmetric)
+7. Unified Focal loss (symmetric and asymmetric)
 
 ## Description of the Unified Focal loss
-The Unified Focal loss is a new compound loss function that unifies Dice-based and cross entropy-based loss functions into a single framework. By incorporating ideas from focal and asymmetric losses, the Unified Focal loss is designed to handle class imbalance, and we achieve state-of-the-art performance using this loss function. 
+The Unified Focal loss is a new compound loss function that unifies Dice-based and cross entropy-based loss functions into a single framework. By incorporating ideas from focal and asymmetric losses, the Unified Focal loss is designed to handle class imbalance.
 
 It can be shown that all Dice and cross entropy based loss functions described above are special cases of the Unified Focal loss:
 
-![Overview of loss function inheritance](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/Summary.png)
+![Overview of loss function inheritance](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/Overview.png)
 
-## **Update: Guidance for hyperparameters to use for your own dataset**
-We have tested the Unified Focal loss on an additional 4 datasets (Will link paper once available). For optimal performance, we find it easiest to keep delta = 0.6, lambda = 0.5, and instead focus on altering the gamma parameter in relation to the degree of class imbalance. Interestingly, we find the Unified Focal loss to outperform DSC + CE loss even when there is little class imbalance, which suggests that the Unified Focal loss may be more widely applicable than we expected.
 
-To choose the right value for gamma, the important step is to identify the degree of class imbalance in the dataset:
-1. If the foreground occupies a large part of the image (i.e. little class imbalance), a small Gamma value is ideal. For ISIC2018, 2018 Data Science bowl, DRIVE, we find Gamma = 0.1 (and potentially less) to be optimal
-2. If the foreground occupies a very small part of the image (i.e. high class imbalance), a large Gamma value is ideal. For CVC-ClinicDB, we find Gamma = 0.3 (and potentially higher) to be optimal.  
-
-## Example use case 1: Breast UltraSound 2017 (BUS2017) dataset
+## Example use case 1: 2D binary datasets (CVC-ClinicDB, DRIVE, BUS2017)
 
 The BUS2017 dataset B consists of 163 ultrasound images and associated ground truth segmentations collected from the UDIAT Diagnostic Centre of the Parc Tauli Corporation, Sabadell, Spain.
 
+The data for the CVC-ClinicDB dataset can be found at: https://polyp.grand-challenge.org/CVCClinicDB/
+The data for the DRIVE dataset can be found at: https://computervisiononline.com/dataset/1105138662
 The data for the BUS2017 dataset must be requested from their website: http://www2.docm.mmu.ac.uk/STAFF/m.yap/dataset.php
 
-In our paper, we use the standard U-Net with the Unified Focal loss and compare with state-of-the-art solutions:
+![2D binary comparison](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/2D_binary.png)
 
-![BUS2017 comparison](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/BUS2017_table.png)
+Example segmentations, for each loss function for each of the three datasets. The image and ground truth are provided for reference. The false positive are highlighted in magenta, and the false negatives are highlighted in green. The yellow arrows highlight example areas where segmentation quality differs.
 
-
-## Example use case 2: Brain Tumour Segmentation 2020 (BraTS20) dataset
+## Example use case 2: 3D binary (BraTS20) dataset
 
 The BraTS20 dataset is currently the largest, publicly available and fully-annotated dataset for medical image segmentation. It comprises of 494 multimodal scans of patients with either low-grade glioma or high-grade glioblastoma. We focus on the T1 contrast-enhanced MRI scans for segmenting the enhancing tumour region.
 
 The data for the BraTS20 dataset can be downloaded by following the instructions on their official website: https://www.med.upenn.edu/cbica/brats2020/data.html
 
-In our paper, we use the standard U-Net with the Unified Focal loss and compare with state-of-the-art solutions:
+![BraTS20 comparison](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/3D_binary.png)
 
-![BraTS20 comparison](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/BraTS20_table.png)
+Axial slice from an example segmentation for each loss function for the BraTS20 dataset. The image and ground truth are provided for reference. The false positive are highlighted in magenta, and the false negatives are highlighted in green. The yellow arrows highlight example areas where segmentation quality differs.
 
 ## Example use case 3: Kidney Tumour Segmentation 2019 (KiTS19) dataset
 
@@ -55,23 +49,15 @@ The KiTS19 dataset consists of 300 arterial phase abdominal CT scans. These are 
 
 The data for the KiTS19 dataset can be downloaded from their official github repository: https://github.com/neheller/kits19
 
-In our paper, we use the standard U-Net with the Unified Focal loss and compare with state-of-the-art solutions:
+![KiTS19 comparison](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/3D_multiclass.png)
 
-![KiTS19 comparison](https://github.com/mlyg/mixed-focal-loss/blob/main/Figures/KiTS19_table.png)
-
-
-## Example segmentations using different loss functions
-
-![Example comparison](https://github.com/mlyg/unified-focal-loss/blob/main/Figures/Example_outputs.png)
-
-Image segmentations generated from the BUS2017 (top), BraTS20 (middle) and KiTS19 (bottom) datasets using (a) ground truth, (b) Focal loss, (c) Dice loss, (d) Tversky loss, (e) Focal Tversky loss, (f) Combo loss, (g) Hybrid Focal loss and (h) Unified Focal loss. For BUS2017 and BraTS20 datasets, the breast lesion and enhancing tumour region are highlighted in red respectively. For the KiTS19 dataset, the kidney is highlighted in red and the tumour in blue. A magnified contour of the segmentation is provided in the top right-hand corner of each image.
-
+Axial slice from an example segmentation for each loss function for the KiTS19 dataset. The image and ground truth are provided for reference. The red contour corresponds to the kidneys, and the blue contour to the tumour.
 
 ## How to use the Unified Focal loss
 
 For our experiments, we make use of the Medical Image Segmentation with Convolutional Neural Networks (MIScnn) open-source python library: 
 https://github.com/frankkramer-lab/MIScnn
 
-The Unified Focal loss can be passed directly as a loss function into model.compile:
+The asymmetric Unified Focal loss can be passed directly as a loss function into model.compile:
 
-model.compile(loss = unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2), ...)
+model.compile(loss = asym_unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2), ...)
