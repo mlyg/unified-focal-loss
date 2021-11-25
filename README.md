@@ -62,4 +62,4 @@ https://github.com/frankkramer-lab/MIScnn
 
 To use each loss function, for example, the asymmetric Unified Focal loss can be passed directly into model.compile:
 
-model.compile(loss = asym_unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2), ...)
+model.compile(loss = asym_unified_focal_loss(), ...)
