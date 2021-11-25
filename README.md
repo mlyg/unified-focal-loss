@@ -45,7 +45,7 @@ The data for the BraTS20 dataset can be downloaded by following the instructions
 
 Axial slice from an example segmentation for each loss function for the BraTS20 dataset. The image and ground truth are provided for reference. The false positive are highlighted in magenta, and the false negatives are highlighted in green. The yellow arrows highlight example areas where segmentation quality differs.
 
-## Example use case 3: Kidney Tumour Segmentation 2019 (KiTS19) dataset
+## Example use case 3: 3D multiclass (KiTS19) dataset
 
 The KiTS19 dataset consists of 300 arterial phase abdominal CT scans. These are from patients who underwent partial removal of the tumour and surrounding kidney or complete removal of the kidney including the tumour at the University of Minnesota Medical Center, USA.
 
