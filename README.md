@@ -23,6 +23,8 @@ It can be shown that all Dice and cross entropy based loss functions described a
 
 ## Example use case 1: 2D binary datasets (CVC-ClinicDB, DRIVE, BUS2017)
 
+The CVC-ClinicDB dataset consists of 612 frames containing polyps generated from 23 video sequences from 13 different patients using standard colonoscopy.
+The DRIVE dataset consists of 40 coloured fundus photographs obtained from diabetic retinopathy screening in the Netherlands.
 The BUS2017 dataset B consists of 163 ultrasound images and associated ground truth segmentations collected from the UDIAT Diagnostic Centre of the Parc Tauli Corporation, Sabadell, Spain.
 
 The data for the CVC-ClinicDB dataset can be found at: https://polyp.grand-challenge.org/CVCClinicDB/
@@ -58,6 +60,6 @@ Axial slice from an example segmentation for each loss function for the KiTS19 d
 For our experiments, we make use of the Medical Image Segmentation with Convolutional Neural Networks (MIScnn) open-source python library: 
 https://github.com/frankkramer-lab/MIScnn
 
-The asymmetric Unified Focal loss can be passed directly as a loss function into model.compile:
+To use each loss function, for example, the asymmetric Unified Focal loss can be passed directly into model.compile:
 
 model.compile(loss = asym_unified_focal_loss(weight=0.5, delta=0.6, gamma=0.2), ...)
