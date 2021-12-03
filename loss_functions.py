@@ -1,4 +1,3 @@
-        
 from tensorflow.keras import backend as K
 import numpy as np
 import tensorflow as tf
@@ -219,6 +218,41 @@ def symmetric_focal_loss(delta=0.7, gamma=2.):
         return loss
 
     return loss_function
+
+#################################
+# Symmetric Focal Tversky loss  #
+#################################
+def symmetric_focal_tversky_loss(delta=0.7, gamma=0.75):
+    """This is the implementation for binary segmentation.
+    Parameters
+    ----------
+    delta : float, optional
+        controls weight given to false positive and false negatives, by default 0.7
+    gamma : float, optional
+        focal parameter controls degree of down-weighting of easy examples, by default 0.75
+    """
+    def loss_function(y_true, y_pred):
+        # Clip values to prevent division by zero error
+        epsilon = K.epsilon()
+        y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
+
+        axis = identify_axis(y_true.get_shape())
+        # Calculate true positives (tp), false negatives (fn) and false positives (fp)     
+        tp = K.sum(y_true * y_pred, axis=axis)
+        fn = K.sum(y_true * (1-y_pred), axis=axis)
+        fp = K.sum((1-y_true) * y_pred, axis=axis)
+        dice_class = (tp + epsilon)/(tp + delta*fn + (1-delta)*fp + epsilon)
+
+        #calculate losses separately for each class, enhancing both classes
+        back_dice = (1-dice_class[:,0]) * K.pow(1-dice_class[:,0], -gamma) 
+        fore_dice = (1-dice_class[:,1]) * K.pow(1-dice_class[:,1], -gamma) 
+
+        # Average class scores
+        loss = K.mean(tf.stack([back_dice,fore_dice],axis=-1))
+        return loss
+
+    return loss_function
+
 
 ################################
 #     Asymmetric Focal loss    #
