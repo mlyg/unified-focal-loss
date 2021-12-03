@@ -255,7 +255,7 @@ def asymmetric_focal_loss(delta=0.7, gamma=2.):
 #################################
 # Asymmetric Focal Tversky loss #
 #################################
-def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
+def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75):
     """This is the implementation for binary segmentation.
     Parameters
     ----------
@@ -263,8 +263,6 @@ def asymmetric_focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
         controls weight given to false positive and false negatives, by default 0.7
     gamma : float, optional
         focal parameter controls degree of down-weighting of easy examples, by default 0.75
-    smooth : float, optional
-        smooithing constant to prevent division by 0 errors, by default 0.000001
     """
     def loss_function(y_true, y_pred):
         # Clip values to prevent division by zero error
