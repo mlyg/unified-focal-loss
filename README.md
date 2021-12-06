@@ -2,7 +2,8 @@
 Repository for the code used in "Unified Focal Loss: Generalising Dice and Cross Entropy-based Losses to Handle Class Imbalanced Medical Image Segmentation".
 
 ## Source
-**Update:** The paper has been accepted into Computerized Imaging and Graphics
+**Update:** The paper has been accepted into **Computerized Imaging and Graphics**.
+
 The latest version of the preprint can be found at: https://arxiv.org/abs/2102.04525
 
 ## Description of repository contents
