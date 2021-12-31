@@ -2,9 +2,7 @@
 Repository for the code used in "Unified Focal Loss: Generalising Dice and Cross Entropy-based Losses to Handle Class Imbalanced Medical Image Segmentation".
 
 ## Source
-**Update:** The paper has been accepted into **Computerized Medical Imaging and Graphics**.
-
-The latest version of the preprint can be found at: https://arxiv.org/abs/2102.04525
+**Update:** The published version of the paper can be found at: https://www.sciencedirect.com/science/article/pii/S0895611121001750
 
 ## Description of repository contents
 In this repository, please find the associated Tensorflow/Keras implementation for the following loss functions:
