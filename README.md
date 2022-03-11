@@ -13,6 +13,9 @@ In this repository, please find the associated Tensorflow/Keras implementation f
 5. Focal loss (symmetric and asymmetric)
 7. Unified Focal loss (symmetric and asymmetric)
 
+For the Pytorch implementation, please take a look at:
+https://github.com/oikosohn/compound-loss-pytorch
+
 ## Description of the Unified Focal loss
 The Unified Focal loss is a new compound loss function that unifies Dice-based and cross entropy-based loss functions into a single framework. By incorporating ideas from focal and asymmetric losses, the Unified Focal loss is designed to handle class imbalance.
 
