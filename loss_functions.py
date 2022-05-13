@@ -160,12 +160,12 @@ def focal_tversky_loss(delta=0.7, gamma=0.75, smooth=0.000001):
 ################################
 #          Focal loss          #
 ################################
-def focal_loss(alpha=None, beta=None, gamma_f=2.):
+def focal_loss(alpha=None, gamma_f=2.):
     """Focal loss is used to address the issue of the class imbalance problem. A modulation term applied to the Cross-Entropy loss function.
     Parameters
     ----------
     alpha : float, optional
-        controls relative weight of false positives and false negatives. Beta > 0.5 penalises false negatives more than false positives, by default None
+        controls relative weight of false positives and false negatives. alpha > 0.5 penalises false negatives more than false positives, by default None
     gamma_f : float, optional
         focal parameter controls degree of down-weighting of easy examples, by default 2.
     """
